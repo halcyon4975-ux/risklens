@@ -11,7 +11,7 @@ class Asset(db.Model):
     name = db.Column(
         db.String(100),
         nullable=False
-    )
+    )   
     
     target = db.Column(
     db.String(255),

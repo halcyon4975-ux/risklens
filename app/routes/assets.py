@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from ipaddress import ip_address as validate_ip
-
+import socket
 from app import db
 from app.models.asset import Asset
 
@@ -13,43 +13,49 @@ def create_asset():
     data = request.get_json()
 
     if not data:
-        return jsonify({
-            "error": "Request body must contain JSON"
-        }), 400
+        return jsonify({"error": "Request body must contain JSON"}), 400
 
     name = data.get("name")
-    ip_address = data.get("ip_address")
+    target = data.get("target")
+   
     description = data.get("description", "")
 
     if not name:
-        return jsonify({
-            "error": "Asset name is required"
-        }), 400
+        return jsonify({"error": "Asset name is required"}), 400
 
-    if not ip_address:
-        return jsonify({
-            "error": "IP address is required"
-        }), 400
+    if not target:
+        return jsonify({"error": "Target is required"}), 400
 
+    
     try:
-        validate_ip(ip_address)
+    # If the target is already an IP address
+       validate_ip(target)
+       ip_address = target
+
     except ValueError:
-        return jsonify({
-            "error": "Invalid IP address"
-        }), 400
+    # Otherwise treat it as a domain name
+        try:
+            ip_address = socket.gethostbyname(target)
+        except socket.gaierror:
+            return jsonify({
+            "error": "Invalid target. Enter a valid IP address or domain."
+        }), 400 
+
+
+    
+
 
     existing_asset = Asset.query.filter_by(
-        ip_address=ip_address
+        ip_address=ip_address                  # ✅ now works correctly
     ).first()
 
     if existing_asset:
-        return jsonify({
-            "error": "Asset with this IP address already exists"
-        }), 409
+        return jsonify({"error": "Asset with this IP address already exists"}), 409
 
     asset = Asset(
         name=name,
-        ip_address=ip_address,
+        target=target,
+        ip_address=ip_address,                 # ✅ now works correctly
         description=description
     )
 
@@ -61,6 +67,7 @@ def create_asset():
         "asset": {
             "id": asset.id,
             "name": asset.name,
+            "target": asset.target,
             "ip_address": asset.ip_address
         }
     }), 201
@@ -76,6 +83,7 @@ def get_assets():
         results.append({
             "id": asset.id,
             "name": asset.name,
+            "target": asset.target,
             "ip_address": asset.ip_address,
             "description": asset.description,
             "created_at": asset.created_at.isoformat()

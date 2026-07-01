@@ -150,6 +150,101 @@ Store Scan Results
 Retrieve Historical Results
 ```
 
+
+
+## API Endpoints
+
+### 1. Create Asset
+
+**POST** `/assets`
+
+Creates a new asset using either an IP address or a domain name as the target.
+
+**Request Body**
+
+```json
+{
+    "name": "OWASP Juice Shop",
+    "target": "owasp-juice.shop",
+    "description": "Deliberately vulnerable web application"
+}
+```
+
+**Response (201 Created)**
+
+```json
+{
+    "message": "Asset created successfully",
+    "asset": {
+        "id": 1,
+        "name": "OWASP Juice Shop",
+        "target": "owasp-juice.shop",
+        "ip_address": "81.169.145.156"
+    }
+}
+```
+
+---
+
+### 2. Get All Assets
+
+**GET** `/assets`
+
+Returns all registered assets.
+
+---
+
+### 3. Start Scan
+
+**POST** `/assets/{asset_id}/scan`
+
+Starts a port scan for the specified asset.
+
+**Example**
+
+```
+POST /assets/1/scan
+```
+
+**Response**
+
+```json
+{
+    "message": "Scan created",
+    "scan_id": 8,
+    "status": "COMPLETED"
+}
+```
+
+---
+
+### 4. Get Scan Result
+
+**GET** `/scans/{scan_id}`
+
+Returns the detailed results of a completed scan.
+
+**Example**
+
+```
+GET /scans/8
+```
+
+---
+
+### 5. Get Scan History (Optional)
+
+**GET** `/assets/{asset_id}/scans`
+
+Returns all scans performed on a specific asset.
+
+**Example**
+
+```
+GET /assets/1/scans
+```
+
+
 ---
 
 ## Current Project Status
@@ -186,5 +281,5 @@ Frontend dashboard and user interface are currently under development.
 
 This project is developed for educational purposes and cybersecurity research.
 
-## Authur
+## Author
 Derick
