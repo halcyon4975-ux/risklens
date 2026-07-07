@@ -1,6 +1,7 @@
-from flask import Flask
+from flask import Flask, app
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_cors import CORS
 
 
 db = SQLAlchemy()
@@ -31,5 +32,10 @@ def create_app():
     # Load models for migrations (use importlib to avoid shadowing local `app` variable)
     import importlib
     importlib.import_module("app.models")
+
+
+
+    CORS(app, resources={r"/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}})
+
 
     return app

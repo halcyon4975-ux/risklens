@@ -1,4 +1,6 @@
 from app import db
+import datetime as dt
+
 
 from app.models.scan import Scan
 from app.models.scan_result import ScanResult
@@ -16,6 +18,7 @@ def run_scan(scan_id, ip):
 
 
     scan.status = "RUNNING"
+    scan.completed_at = dt.datetime.utcnow()
     db.session.commit()
 
 

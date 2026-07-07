@@ -46,7 +46,7 @@ def create_asset():
 
 
     existing_asset = Asset.query.filter_by(
-        ip_address=ip_address                  # ✅ now works correctly
+        ip_address=ip_address                
     ).first()
 
     if existing_asset:
@@ -55,7 +55,7 @@ def create_asset():
     asset = Asset(
         name=name,
         target=target,
-        ip_address=ip_address,                 # ✅ now works correctly
+        ip_address=ip_address,                
         description=description
     )
 
@@ -90,3 +90,21 @@ def get_assets():
         })
 
     return jsonify(results), 200
+
+
+@assets_bp.route("/assets/<int:asset_id>", methods=["GET"])
+def get_asset(asset_id):
+
+    asset = Asset.query.get(asset_id)
+
+    if not asset:
+        return jsonify({"error": "Asset not found"}), 404
+
+    return jsonify({
+        "id": asset.id,
+        "name": asset.name,
+        "target": asset.target,
+        "ip_address": asset.ip_address,
+        "description": asset.description,
+        "created_at": asset.created_at.isoformat()
+    }), 200
