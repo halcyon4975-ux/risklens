@@ -26,11 +26,11 @@ RiskLens is a lightweight cybersecurity asset exposure assessment platform desig
 * Flask-Migrate
 * SQLite
 
-### Frontend (still In Progress)
+### Frontend 
 
-* HTML5
-* Tailwind CSS
-* JavaScript
+* React
+* Vite
+* TypeScript
 
 ---
 
